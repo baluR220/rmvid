@@ -1,0 +1,6 @@
+sleep 5
+cd /opt/rmvid-server/
+export DISPLAY=:0
+
+python3 /opt/rmvid-server/ccenter.py start_player
+python3 /opt/rmvid-server/server.py &
