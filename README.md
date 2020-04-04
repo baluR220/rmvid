@@ -8,5 +8,5 @@ for proper work server should have systemd as init system and apt as package man
 download client folder on your machine (Win), run install.py.
 for proper work client machine should have tkinter module which is present by default in python for Windows.
 
-#usage
+# usage
 --TODO: fill this paragraph--
