@@ -1,5 +1,5 @@
 # rmvid
-remote video control, digital signage
+remote video control, digital signage, requires python 3.X, but can be compiled into executable file with some add work
 
 # installation
 download server folder on your remote player machine (linux), run bash install.sh as sudo, reboot.
