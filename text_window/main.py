@@ -66,7 +66,7 @@ class Flow_text():
 
     def move_widget(self):
         '''
-        Move text alohgside the length of canvas.
+        Move text alongside the length of canvas.
         '''
         bounds = self.main_canvas.bbox(self.main_text)
         length = bounds[2] - bounds[0]
@@ -82,9 +82,9 @@ class Flow_text():
         if match:
             self.main_canvas.itemconfig(self.bg, fill=color)
             self.root.update()
-            return('bg: color changed to %s' % color)
+            return('bg color changed to %s' % color)
         else:
-            return('bg: wrong color! %s' % color)
+            return('bg wrong color: %s' % color)
 
 
 class Control():
