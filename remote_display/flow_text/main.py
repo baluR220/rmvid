@@ -11,7 +11,7 @@ try:
     work_dir = os.path.dirname(os.path.realpath(__file__))
     import_path = os.path.dirname(work_dir)
     sys.path.append(import_path)
-    from common.widget import Control
+    from common.widget import Control_base
     from common.misc import check_python_version
 except ImportError:
     print(traceback.format_exc())
@@ -84,6 +84,22 @@ class Flow_text():
             return('bg color changed to %s' % color)
         else:
             return('bg wrong color: %s' % color)
+
+
+class Control(Control_base):
+    '''
+    Class that handles commands from control app.
+    '''
+    def handle_command(self, command: str) -> str:
+        '''
+        Determine what command to execute. Always return string
+        that will be sent to control application.
+        '''
+        command = command.split()
+        if command[0] == 'bg' and len(command) == 2:
+            return self.widget.change_bg(command[1])
+        else:
+            return('command unknown')
 
 
 if __name__ == '__main__':

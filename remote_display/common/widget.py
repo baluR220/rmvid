@@ -7,25 +7,13 @@ import socket
 import threading
 
 
-class Control():
+class Control_base():
     '''
-    Class that creates threads and handles commands
-    from control application.
+    Class that creates threads and interface for control.
     '''
     def __init__(self, widget_class, socket_file):
         self.widget_constructor = widget_class
         self.socket_file = socket_file
-
-    def handle_command(self, command: str) -> str:
-        '''
-        Determine what command to execute. Always return string
-        that will be sent to control application.
-        '''
-        command = command.split()
-        if command[0] == 'bg' and len(command) == 2:
-            return self.widget.change_bg(command[1])
-        else:
-            return('command unknown')
 
     def socket_thread(self):
         '''
@@ -53,7 +41,7 @@ class Control():
             else:
                 data = self.handle_command(data)
                 conn.send(data.encode('utf-8'))
-        socket_thread()
+        self.socket_thread()
 
     def gui_thread(self):
         '''

@@ -13,7 +13,7 @@ except ImportError:
 
 
 def main():
-    socket_file = 'flow_text/text.socket'
+    socket_file = os.path.join(work_dir, 'flow_text/text.socket')
     try:
         client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         client.settimeout(5)
