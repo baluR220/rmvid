@@ -2,7 +2,7 @@ import socket
 import sys
 
 
-socket_file = './socket'
+socket_file = './text.socket'
 try:
     client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     client.settimeout(5)
