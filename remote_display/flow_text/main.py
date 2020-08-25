@@ -1,22 +1,21 @@
 import sys
 import os
-import socket
-import threading
 from tkinter import *
 from tkinter.ttk import *
 from config import *
-from time import sleep
 import re
+import traceback
 
 
-def check_python_version():
-    '''
-    Check version of python that called this script.
-    '''
-    PYTHON_VERSION = sys.version.split(' ')[0]
-    WRONG_PYTHON_VERSION = "Python version should be 3.8 \
-or newer. Your's is %s" % PYTHON_VERSION
-    assert sys.version_info >= (3, 8), WRONG_PYTHON_VERSION
+try:
+    work_dir = os.path.dirname(os.path.realpath(__file__))
+    import_path = os.path.dirname(work_dir)
+    sys.path.append(import_path)
+    from common.widget import Control
+    from common.misc import check_python_version
+except ImportError:
+    print(traceback.format_exc())
+    sys.exit()
 
 
 class Flow_text():
@@ -87,69 +86,8 @@ class Flow_text():
             return('bg wrong color: %s' % color)
 
 
-class Control():
-    '''
-    Class that creates threads and handles commands
-    from control application.
-    '''
-    def __init__(self):
-        pass
-
-    def handle_command(self, command: str) -> str:
-        '''
-        Determine what command to execute. Always return string
-        that will be sent to control application.
-        '''
-        command = command.split()
-        if command[0] == 'bg' and len(command) == 2:
-            return self.widget.change_bg(command[1])
-        else:
-            return('command unknown')
-
-    def socket_thread(self):
-        '''
-        Function to create socket and establish connection to the
-        control application. Called in new thread.
-        '''
-        socket_file = './text.socket'
-        if os.path.exists(socket_file):
-            os.remove(socket_file)
-        server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        server.bind(socket_file)
-        server.listen(1)
-        conn, addr = server.accept()
-        while True:
-            data = conn.recv(1024).decode('utf-8')
-            if data == 'exit':
-                conn.close()
-                break
-            elif data == 'stop':
-                conn.send('stoping widget'.encode('utf-8'))
-                sys.exit()
-            else:
-                data = self.handle_command(data)
-                conn.send(data.encode('utf-8'))
-        socket_thread()
-
-    def gui_thread(self):
-        '''
-        Function to create gui-like window with visual information.
-        Called in new thread.
-        '''
-        self.widget = Flow_text()
-        self.widget.root.mainloop()
-
-    def launch_threads(self):
-        '''
-        Launch one thread with tk mainloop and other with socket.
-        '''
-        threading.Thread(target=self.gui_thread, daemon=True).start()
-        threading.Thread(target=self.socket_thread).start()
-
-
 if __name__ == '__main__':
     check_python_version()
-    control = Control()
+    socket_file = os.path.join(work_dir, 'text.socket')
+    control = Control(Flow_text, socket_file)
     control.launch_threads()
