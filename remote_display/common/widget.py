@@ -47,6 +47,8 @@ class Control():
                 break
             elif data == 'stop':
                 conn.send('stoping widget'.encode('utf-8'))
+                server.close()
+                os.remove(self.socket_file)
                 sys.exit()
             else:
                 data = self.handle_command(data)
