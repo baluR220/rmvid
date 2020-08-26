@@ -1,5 +1,5 @@
 '''
-Configuartion parameters to be read on start of widget.
+Configuration parameters to be read on start of a widget.
 
 '''
 GEOMETRY = '+50+0'

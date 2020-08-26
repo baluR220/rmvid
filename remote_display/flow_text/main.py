@@ -39,8 +39,8 @@ class Flow_text():
 
     def draw_widget(self):
         '''
-        Creates root window, draws canvas with rectangle and text.
-        Rectangle acts as bacground color for text.
+        Creates a root window, draws a canvas with a rectangle and a text.
+        The rectangle acts as a background color for the text.
         '''
         self.root = Tk()
         self.root.overrideredirect(1)
@@ -65,7 +65,7 @@ class Flow_text():
 
     def move_widget(self):
         '''
-        Move text alongside the length of canvas.
+        Moves a text alongside the length of a canvas.
         '''
         bounds = self.main_canvas.bbox(self.main_text)
         length = bounds[2] - bounds[0]
@@ -88,18 +88,18 @@ class Flow_text():
 
 class Control(Control_base):
     '''
-    Class that handles commands from control app.
+    Class that handles commands from the control application.
     '''
     def handle_command(self, command: str) -> str:
         '''
-        Determine what command to execute. Always return string
-        that will be sent to control application.
+        Determines which command to execute. Always returns a string
+        that is sent to the control application.
         '''
         command = command.split()
         if command[0] == 'bg' and len(command) == 2:
             return self.widget.change_bg(command[1])
         else:
-            return('command unknown')
+            return('Command unknown')
 
 
 if __name__ == '__main__':

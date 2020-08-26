@@ -1,5 +1,5 @@
 '''
-Classes and functions common for widgets.
+Classes and functions which are common for widgets.
 '''
 import sys
 import os
@@ -9,7 +9,7 @@ import threading
 
 class Control_base():
     '''
-    Class that creates threads and interface for control.
+    Class that creates threads and an interface for a control application.
     '''
     def __init__(self, widget_class, socket_file):
         self.widget_constructor = widget_class
@@ -17,8 +17,8 @@ class Control_base():
 
     def socket_thread(self):
         '''
-        Function to create socket and establish connection to the
-        control application. Called in new thread.
+        The function to create a socket and establish a connection to the
+        control application. Called in a new thread.
         '''
         if os.path.exists(self.socket_file):
             os.remove(self.socket_file)
@@ -34,7 +34,7 @@ class Control_base():
                 conn.close()
                 break
             elif data == 'stop':
-                conn.send('stoping widget'.encode('utf-8'))
+                conn.send('stopping widget'.encode('utf-8'))
                 server.close()
                 os.remove(self.socket_file)
                 sys.exit()
@@ -45,15 +45,15 @@ class Control_base():
 
     def gui_thread(self):
         '''
-        Function to create gui-like window with visual information.
-        Called in new thread.
+        The function to create a gui-like window with visual information.
+        Called in a new thread.
         '''
         self.widget = self.widget_constructor()
         self.widget.root.mainloop()
 
     def launch_threads(self):
         '''
-        Launch one thread with tk mainloop and other with socket.
+        The function to launch one thread with a tk mainloop and other with a socket.
         '''
         threading.Thread(target=self.gui_thread, daemon=True).start()
         threading.Thread(target=self.socket_thread).start()
