@@ -12,6 +12,7 @@ try:
     import_path = os.path.dirname(work_dir)
     sys.path.append(import_path)
     from common.widget import Control_base
+    from common.config import COLORS
     from common.misc import check_python_version
 except ImportError:
     print(traceback.format_exc())
@@ -76,9 +77,13 @@ class Flow_text():
             self.main_canvas.move(self.main_text, length + self.width, 0)
             self.main_canvas.after(10, self.move_widget)
 
-    def change_bg(self, color):
+    def color_is_valid(self, color):
+        color_valid = color in COLORS
         match = re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', color)
-        if match:
+        return color_valid or match
+
+    def change_bg(self, color):
+        if self.color_is_valid(color):
             self.main_canvas.itemconfig(self.bg, fill=color)
             self.root.update()
             return('bg color changed to %s' % color)
@@ -96,14 +101,17 @@ class Control(Control_base):
         that is sent to the control application.
         '''
         command = command.split()
-        if command[0] == 'bg' and len(command) == 2:
-            return self.widget.change_bg(command[1])
+        if len(command) > 1:
+            if command[0] == 'bg_color':
+                return self.widget.change_bg(command[1])
+            else:
+                return('element unknown')
         else:
-            return('Command unknown')
+            return ('Command unknown')
 
 
 if __name__ == '__main__':
     check_python_version()
     socket_file = os.path.join(work_dir, 'text.socket')
-    control = Control(Flow_text, socket_file)
+    control = Control(Flow_text, 'flow_text', socket_file)
     control.launch_threads()
