@@ -54,7 +54,7 @@ class Flow_text():
         )
         self.main_canvas.pack()
         self.bg = self.main_canvas.create_rectangle(
-            self.offset_x, self.offset_y, self.width, self.height,
+            self.offset_x - 1, self.offset_y, self.width + 1, self.height,
             fill=self.bg_color, outline=self.bg_color
         )
 
@@ -85,6 +85,7 @@ class Flow_text():
     def change_bg(self, color):
         if self.color_is_valid(color):
             self.main_canvas.itemconfig(self.bg, fill=color)
+            self.main_canvas.config(bg=color)
             self.root.update()
             return('bg color changed to %s' % color)
         else:
