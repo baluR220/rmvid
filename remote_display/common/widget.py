@@ -11,9 +11,13 @@ class Control_base():
     '''
     Class that creates threads and an interface for a control application.
     '''
-    def __init__(self, widget_class, socket_file):
+    def __init__(self, widget_class, name, socket_file):
         self.widget_constructor = widget_class
         self.socket_file = socket_file
+        self.widget_name = name
+
+    def handle_command(self, data):
+        return data
 
     def socket_thread(self):
         '''
@@ -30,17 +34,16 @@ class Control_base():
         conn, addr = server.accept()
         while True:
             data = conn.recv(1024).decode('utf-8')
-            if data == 'exit':
-                conn.close()
-                break
-            elif data == 'stop':
-                conn.send('stopping widget'.encode('utf-8'))
+            if data == 'stop':
+                conn.send(('stopping %s' % self.widget_name).encode('utf-8'))
                 server.close()
                 os.remove(self.socket_file)
                 sys.exit()
             else:
                 data = self.handle_command(data)
                 conn.send(data.encode('utf-8'))
+                conn.close()
+                break
         self.socket_thread()
 
     def gui_thread(self):
