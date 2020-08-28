@@ -4,7 +4,7 @@ POSITION = +50+50
 
 GEOMETRY = 600x50
 
-BG_COLOR = gray
+BG_COLOR = blue
 
 TEXT_COLOR = orange
 

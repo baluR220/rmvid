@@ -50,14 +50,9 @@ class Flow_text():
 
         self.main_canvas = Canvas(
             self.root, width=self.width, height=self.height,
-            highlightthickness=0
+            highlightthickness=0, bg=self.bg_color
         )
         self.main_canvas.pack()
-        self.bg = self.main_canvas.create_rectangle(
-            self.offset_x - 1, self.offset_y, self.width + 1, self.height,
-            fill=self.bg_color, outline=self.bg_color
-        )
-
         self.main_text = self.main_canvas.create_text(
             self.offset_x, self.offset_y, anchor=NW, fill=self.text_color,
             text=self.text, font=(self.font_family, self.font_size)
@@ -90,7 +85,6 @@ class Flow_text():
         Change background color
         '''
         if self.color_is_valid(color):
-            self.main_canvas.itemconfig(self.bg, fill=color)
             self.main_canvas.config(bg=color)
             self.root.update()
             control.save_to_config('BG_COLOR', color)
@@ -124,8 +118,19 @@ class Flow_text():
         else:
             return('wrong position: %s' % position)
 
-    def change_geometry(self):
-        pass
+    def change_geometry(self, geometry):
+        match = re.search(r'^[0-9]+x[0-9]+$', geometry)
+        if match:
+            width, height = geometry.split('x')
+            width = int(width)
+            height = int(height)
+            self.main_canvas.config(width=width, height=height)
+            self.width = width
+            self.root.update()
+            control.save_to_config('GEOMETRY', geometry)
+            return('geometry changed to %s' % geometry)
+        else:
+            return('wrong geometry: %s' % geometry)
 
     def change_speed(self):
         pass
@@ -149,6 +154,8 @@ class Flow_text():
             return self.change_text_color(value)
         elif option.lower() == 'position':
             return self.change_position(value)
+        elif option.lower() == 'geometry':
+            return self.change_geometry(value)
         else:
             return 'unknown element passed the filter!'
 
