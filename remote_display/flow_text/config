@@ -1,10 +1,8 @@
 # Configuration parameters to be read on start of a widget.
 
-GEOMETRY = +50+0
+POSITION = +50+50
 
-WIDTH = 600
-
-HEIGHT = 50
+GEOMETRY = 600x50
 
 BG_COLOR = gray
 

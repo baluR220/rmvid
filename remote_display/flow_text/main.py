@@ -26,11 +26,12 @@ class Flow_text():
         self.text = control.options['TEXT']
         self.text_color = control.options['TEXT_COLOR']
         self.bg_color = control.options['BG_COLOR']
-        self.geometry = control.options['GEOMETRY']
-        self.width = int(control.options['WIDTH'])
-        self.height = int(control.options['HEIGHT'])
-        self.font_size = int(self.height * 0.7)
+        self.geometry = control.options['POSITION']
+        width, height = control.options['GEOMETRY'].split('x')
+        self.width = int(width)
+        self.height = int(height)
         self.font_family = control.options['FONT_FAMILY']
+        self.font_size = int(self.height * 0.7)
         self.offset_y = -self.height * 0.08
         self.offset_x = 0
 
@@ -109,8 +110,19 @@ class Flow_text():
         else:
             return('wrong text_color: %s' % color)
 
-    def change_position(self):
-        pass
+    def change_position(self, position):
+        '''
+        change position, vaild position looks like '+50+50'
+        which means the offset from left upper corner of display
+        '''
+        match = re.search(r'^(?:[-+][0-9]+){2}$', position)
+        if match:
+            self.root.geometry(position)
+            self.root.update()
+            control.save_to_config('POSITION', position)
+            return('position changed to %s' % position)
+        else:
+            return('wrong position: %s' % position)
 
     def change_geometry(self):
         pass
@@ -135,6 +147,8 @@ class Flow_text():
             return self.change_bg_color(value)
         elif option.lower() == 'text_color':
             return self.change_text_color(value)
+        elif option.lower() == 'position':
+            return self.change_position(value)
         else:
             return 'unknown element passed the filter!'
 
