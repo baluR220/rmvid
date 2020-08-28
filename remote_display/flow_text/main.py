@@ -2,7 +2,6 @@ import sys
 import os
 from tkinter import *
 from tkinter.ttk import *
-from config import *
 import re
 import traceback
 
@@ -24,14 +23,14 @@ class Flow_text():
     Flowing text widget.
     '''
     def __init__(self):
-        self.text = TEXT
-        self.text_color = TEXT_COLOR
-        self.bg_color = BG_COLOR
-        self.geometry = GEOMETRY
-        self.width = int(WIDTH)
-        self.height = int(HEIGHT)
+        self.text = control.options['TEXT']
+        self.text_color = control.options['TEXT_COLOR']
+        self.bg_color = control.options['BG_COLOR']
+        self.geometry = control.options['GEOMETRY']
+        self.width = int(control.options['WIDTH'])
+        self.height = int(control.options['HEIGHT'])
         self.font_size = int(self.height * 0.7)
-        self.font_family = FONT_FAMILY
+        self.font_family = control.options['FONT_FAMILY']
         self.offset_y = -self.height * 0.08
         self.offset_x = 0
 
@@ -87,6 +86,7 @@ class Flow_text():
             self.main_canvas.itemconfig(self.bg, fill=color)
             self.main_canvas.config(bg=color)
             self.root.update()
+            control.save_to_config('BG_COLOR', color)
             return('bg color changed to %s' % color)
         else:
             return('bg wrong color: %s' % color)
@@ -114,5 +114,6 @@ class Control(Control_base):
 if __name__ == '__main__':
     check_python_version()
     socket_file = os.path.join(work_dir, 'text.socket')
-    control = Control(Flow_text, 'flow_text', socket_file)
+    config_file = os.path.join(work_dir, 'config')
+    control = Control(Flow_text, 'flow_text', socket_file, config_file)
     control.launch_threads()
