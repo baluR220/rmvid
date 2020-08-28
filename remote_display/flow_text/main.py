@@ -81,15 +81,15 @@ class Flow_text():
         match = re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', color)
         return color_valid or match
 
-    def change_bg(self, color):
+    def change_bg_color(self, color):
         if self.color_is_valid(color):
             self.main_canvas.itemconfig(self.bg, fill=color)
             self.main_canvas.config(bg=color)
             self.root.update()
             control.save_to_config('BG_COLOR', color)
-            return('bg color changed to %s' % color)
+            return('bg_color changed to %s' % color)
         else:
-            return('bg wrong color: %s' % color)
+            return('wrong bg_color: %s' % color)
 
 
 class Control(Control_base):
@@ -104,7 +104,7 @@ class Control(Control_base):
         command = command.split()
         if len(command) > 1:
             if command[0] == 'bg_color':
-                return self.widget.change_bg(command[1])
+                return self.widget.change_bg_color(command[1])
             else:
                 return('element unknown')
         else:
