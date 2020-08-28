@@ -6,7 +6,7 @@ WIDTH = 600
 
 HEIGHT = 50
 
-BG_COLOR = orange
+BG_COLOR = red
 
 TEXT_COLOR = #333333
 
@@ -17,4 +17,3 @@ TEXT = Sample text
 SPEED = 1
 
 DIRECTION = left
-

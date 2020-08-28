@@ -59,7 +59,7 @@ def main():
                     widget = data[0]
                     if len(data) > 1:
                         socket_file = os.path.join(
-                            work_dir, '%s/text.socket' % widget
+                            work_dir, '%s/socket.socket' % widget
                         )
                         conn = connection(socket_file)
                         if conn:

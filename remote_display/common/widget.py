@@ -31,15 +31,16 @@ class Control_base():
                     self.options[key.strip()] = val.strip()
 
     def save_to_config(self, option, value):
-        with open(self.config_file, 'r+') as config:
+        with open(self.config_file, 'r') as config:
             out = []
             for line in config:
                 if line.startswith(option):
                     line = '%s = %s\n' % (option, value)
                 out.append(line)
-            config.seek(0)
+        with open(self.config_file, 'w') as config:
             for line in out:
                 config.write(line)
+        self.options[option] = value
 
     def socket_thread(self):
         '''

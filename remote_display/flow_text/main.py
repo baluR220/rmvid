@@ -91,6 +91,9 @@ class Flow_text():
         else:
             return('wrong bg_color: %s' % color)
 
+    def get_bg_color(self):
+        return control.options['BG_COLOR']
+
 
 class Control(Control_base):
     '''
@@ -104,7 +107,18 @@ class Control(Control_base):
         command = command.split()
         if len(command) > 1:
             if command[0] == 'bg_color':
-                return self.widget.change_bg_color(command[1])
+                if len(command[1:]) > 1:
+                    if command[1] == 'set':
+                        if len(command[2:]) > 0:
+                            return self.widget.change_bg_color(command[2])
+                        else:
+                            return ('more arguments needed')
+                    else:
+                        return ('Command unknown')
+                elif command[1] == 'get':
+                    return self.widget.get_bg_color()
+                else:
+                    return ('more arguments needed')
             else:
                 return('element unknown')
         else:
@@ -113,7 +127,7 @@ class Control(Control_base):
 
 if __name__ == '__main__':
     check_python_version()
-    socket_file = os.path.join(work_dir, 'text.socket')
+    socket_file = os.path.join(work_dir, 'socket.socket')
     config_file = os.path.join(work_dir, 'config')
     control = Control(Flow_text, 'flow_text', socket_file, config_file)
     control.launch_threads()
