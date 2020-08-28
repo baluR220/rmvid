@@ -11,13 +11,27 @@ class Control_base():
     '''
     Class that creates threads and an interface for a control application.
     '''
-    def __init__(self, widget_class, name, socket_file):
+    def __init__(self, widget_class, name, socket_file, config_file):
         self.widget_constructor = widget_class
-        self.socket_file = socket_file
         self.widget_name = name
+        self.socket_file = socket_file
+        self.config_file = config_file
+        self.read_config()
 
     def handle_command(self, data):
         return data
+
+    def read_config(self):
+        with open(self.config_file) as config:
+            self.options = {}
+            for line in config:
+                line = line.strip()
+                if not(line.startswith('#') or line == ''):
+                    key, val = line.split('=')
+                    self.options[key.strip()] = val.strip()
+
+    def save_to_config(self, option, value):
+        pass
 
     def socket_thread(self):
         '''
@@ -56,7 +70,8 @@ class Control_base():
 
     def launch_threads(self):
         '''
-        The function to launch one thread with a tk mainloop and other with a socket.
+        The function to launch one thread with a tk mainloop
+        and other with a socket.
         '''
         threading.Thread(target=self.gui_thread, daemon=True).start()
         threading.Thread(target=self.socket_thread).start()
