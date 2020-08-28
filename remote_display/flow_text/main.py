@@ -77,11 +77,17 @@ class Flow_text():
             self.main_canvas.after(10, self.move_widget)
 
     def color_is_valid(self, color):
+        '''
+        Check if color is in COLORS list or looks like #ffffff
+        '''
         color_valid = color in COLORS
         match = re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', color)
         return color_valid or match
 
     def change_bg_color(self, color):
+        '''
+        Change background color
+        '''
         if self.color_is_valid(color):
             self.main_canvas.itemconfig(self.bg, fill=color)
             self.main_canvas.config(bg=color)
@@ -91,8 +97,46 @@ class Flow_text():
         else:
             return('wrong bg_color: %s' % color)
 
-    def get_bg_color(self):
-        return control.options['BG_COLOR']
+    def change_text_color(self, color):
+        '''
+        Change text color
+        '''
+        if self.color_is_valid(color):
+            self.main_canvas.itemconfig(self.main_text, fill=color)
+            self.root.update()
+            control.save_to_config('TEXT_COLOR', color)
+            return('text_color changed to %s' % color)
+        else:
+            return('wrong text_color: %s' % color)
+
+    def change_position(self):
+        pass
+
+    def change_geometry(self):
+        pass
+
+    def change_speed(self):
+        pass
+
+    def change_direction(self):
+        pass
+
+    def get_option(self, option):
+        '''
+        Return current value of option
+        '''
+        return control.options[option.upper()]
+
+    def set_option(self, option, value):
+        '''
+        Set value of option
+        '''
+        if option.lower() == 'bg_color':
+            return self.change_bg_color(value)
+        elif option.lower() == 'text_color':
+            return self.change_text_color(value)
+        else:
+            return 'unknown element passed the filter!'
 
 
 class Control(Control_base):
@@ -106,17 +150,19 @@ class Control(Control_base):
         '''
         command = command.split()
         if len(command) > 1:
-            if command[0] == 'bg_color':
+            if command[0].upper() in self.options:
                 if len(command[1:]) > 1:
                     if command[1] == 'set':
                         if len(command[2:]) > 0:
-                            return self.widget.change_bg_color(command[2])
+                            return self.widget.set_option(
+                                command[0], command[2]
+                            )
                         else:
                             return ('more arguments needed')
                     else:
                         return ('Command unknown')
                 elif command[1] == 'get':
-                    return self.widget.get_bg_color()
+                    return self.widget.get_option(command[0])
                 else:
                     return ('more arguments needed')
             else:
