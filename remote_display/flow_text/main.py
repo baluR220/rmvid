@@ -30,12 +30,21 @@ class Flow_text():
         width, height = control.options['GEOMETRY'].split('x')
         self.width = int(width)
         self.height = int(height)
+        direction = control.options['DIRECTION']
         self.font_family = control.options['FONT_FAMILY']
         self.font_size = int(self.height * 0.7)
         self.offset_y = -self.height * 0.08
         self.offset_x = 0
 
         self.draw_widget()
+        bounds = self.main_canvas.bbox(self.main_text)
+        length = bounds[2] - bounds[0]
+        if direction.lower() == 'right':
+            self.direct = 1
+            self.main_canvas.move(self.main_text, -length, 0)
+        else:
+            self.direct = -1
+            self.main_canvas.move(self.main_text, self.width, 0)
         self.move_widget()
 
     def draw_widget(self):
@@ -57,7 +66,6 @@ class Flow_text():
             self.offset_x, self.offset_y, anchor=NW, fill=self.text_color,
             text=self.text, font=(self.font_family, self.font_size)
         )
-        self.root.update()
 
     def move_widget(self):
         '''
@@ -65,12 +73,21 @@ class Flow_text():
         '''
         bounds = self.main_canvas.bbox(self.main_text)
         length = bounds[2] - bounds[0]
-        self.main_canvas.move(self.main_text, -1, 0)
-        if self.main_canvas.coords(self.main_text)[0] > -length:
-            self.main_canvas.after(10, self.move_widget)
-        else:
-            self.main_canvas.move(self.main_text, length + self.width, 0)
-            self.main_canvas.after(10, self.move_widget)
+        self.main_canvas.move(self.main_text, 1 * self.direct, 0)
+        if self.direct == -1:
+            is_shown = self.main_canvas.coords(self.main_text)[0] > -length
+            if is_shown:
+                self.main_canvas.after(10, self.move_widget)
+            else:
+                self.main_canvas.move(self.main_text, length + self.width, 0)
+                self.main_canvas.after(10, self.move_widget)
+        elif self.direct == 1:
+            is_shown = self.main_canvas.coords(self.main_text)[0] < self.width
+            if is_shown:
+                self.main_canvas.after(10, self.move_widget)
+            else:
+                self.main_canvas.move(self.main_text, -length - self.width, 0)
+                self.main_canvas.after(10, self.move_widget)
 
     def color_is_valid(self, color):
         '''
@@ -126,6 +143,11 @@ class Flow_text():
             height = int(height)
             self.main_canvas.config(width=width, height=height)
             self.width = width
+            font_size = int(height * 0.7)
+            offset_y = -height * 0.08
+            font = (control.options['FONT_FAMILY'], font_size)
+            self.main_canvas.itemconfig(self.main_text, font=font)
+            self.main_canvas.coords(self.main_text, (0, offset_y))
             self.root.update()
             control.save_to_config('GEOMETRY', geometry)
             return('geometry changed to %s' % geometry)
@@ -135,8 +157,20 @@ class Flow_text():
     def change_speed(self):
         pass
 
-    def change_direction(self):
-        pass
+    def change_direction(self, direction):
+        if direction in ['left', 'right']:
+            bounds = self.main_canvas.bbox(self.main_text)
+            length = bounds[2] - bounds[0]
+            if direction.lower() == 'right':
+                self.direct = 1
+                self.main_canvas.move(self.main_text, -length, 0)
+            else:
+                self.direct = -1
+                self.main_canvas.move(self.main_text, self.width, 0)
+            control.save_to_config('DIRECTION', direction)
+            return('direction changed to %s' % direction)
+        else:
+            return('wrong direction: %s' % direction)
 
     def get_option(self, option):
         '''
@@ -156,6 +190,8 @@ class Flow_text():
             return self.change_position(value)
         elif option.lower() == 'geometry':
             return self.change_geometry(value)
+        elif option.lower() == 'direction':
+            return self.change_direction(value)
         else:
             return 'unknown element passed the filter!'
 
