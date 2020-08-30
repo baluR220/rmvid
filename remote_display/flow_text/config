@@ -2,7 +2,7 @@
 
 POSITION = +50+50
 
-GEOMETRY = 600x30
+GEOMETRY = 600x50
 
 BG_COLOR = blue
 
@@ -10,8 +10,8 @@ TEXT_COLOR = orange
 
 FONT_FAMILY = Helvetica
 
-TEXT = txet elpmaS
+TEXT = Sample text
 
-SPEED = 1
+SPEED = 10
 
-DIRECTION = right
+DIRECTION = left

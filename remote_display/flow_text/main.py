@@ -35,16 +35,9 @@ class Flow_text():
         self.font_size = int(self.height * 0.7)
         self.offset_y = -self.height * 0.08
         self.offset_x = 0
-
+        self.speed = control.options['SPEED']
         self.draw_widget()
-        bounds = self.main_canvas.bbox(self.main_text)
-        length = bounds[2] - bounds[0]
-        if direction.lower() == 'right':
-            self.direct = 1
-            self.main_canvas.move(self.main_text, -length, 0)
-        else:
-            self.direct = -1
-            self.main_canvas.move(self.main_text, self.width, 0)
+        self.prepare_to_move(direction)
         self.move_widget()
 
     def draw_widget(self):
@@ -67,27 +60,38 @@ class Flow_text():
             text=self.text, font=(self.font_family, self.font_size)
         )
 
+    def find_text_length(self):
+        bounds = self.main_canvas.bbox(self.main_text)
+        length = bounds[2] - bounds[0]
+        return length
+
+    def prepare_to_move(self, direction):
+        length = self.find_text_length()
+        if direction.lower() == 'right':
+            self.direct = 1
+            self.main_canvas.move(self.main_text, -length, 0)
+        else:
+            self.direct = -1
+            self.main_canvas.move(self.main_text, self.width, 0)
+
     def move_widget(self):
         '''
         Moves a text alongside the length of a canvas.
         '''
-        bounds = self.main_canvas.bbox(self.main_text)
-        length = bounds[2] - bounds[0]
-        self.main_canvas.move(self.main_text, 1 * self.direct, 0)
+        length = self.find_text_length()
+        self.main_canvas.move(self.main_text, self.direct, 0)
+        period = self.speed
         if self.direct == -1:
             is_shown = self.main_canvas.coords(self.main_text)[0] > -length
-            if is_shown:
-                self.main_canvas.after(10, self.move_widget)
-            else:
-                self.main_canvas.move(self.main_text, length + self.width, 0)
-                self.main_canvas.after(10, self.move_widget)
+            start_point = length + self.width
         elif self.direct == 1:
             is_shown = self.main_canvas.coords(self.main_text)[0] < self.width
-            if is_shown:
-                self.main_canvas.after(10, self.move_widget)
-            else:
-                self.main_canvas.move(self.main_text, -length - self.width, 0)
-                self.main_canvas.after(10, self.move_widget)
+            start_point = -(length + self.width)
+        if is_shown:
+            self.main_canvas.after(period, self.move_widget)
+        else:
+            self.main_canvas.move(self.main_text, start_point, 0)
+            self.main_canvas.after(period, self.move_widget)
 
     def color_is_valid(self, color):
         '''
@@ -154,19 +158,18 @@ class Flow_text():
         else:
             return('wrong geometry: %s' % geometry)
 
-    def change_speed(self):
-        pass
+    def change_speed(self, speed):
+        if speed.isdigit():
+            speed = int(speed)
+            self.speed = speed
+            control.save_to_config('SPEED', speed)
+            return('speed changed to %s' % speed)
+        else:
+            return('wrong speed: %s' % speed)
 
     def change_direction(self, direction):
         if direction in ['left', 'right']:
-            bounds = self.main_canvas.bbox(self.main_text)
-            length = bounds[2] - bounds[0]
-            if direction.lower() == 'right':
-                self.direct = 1
-                self.main_canvas.move(self.main_text, -length, 0)
-            else:
-                self.direct = -1
-                self.main_canvas.move(self.main_text, self.width, 0)
+            self.prepare_to_move(direction)
             control.save_to_config('DIRECTION', direction)
             return('direction changed to %s' % direction)
         else:
@@ -192,6 +195,8 @@ class Flow_text():
             return self.change_geometry(value)
         elif option.lower() == 'direction':
             return self.change_direction(value)
+        elif option.lower() == 'speed':
+            return self.change_speed(value)
         else:
             return 'unknown element passed the filter!'
 
