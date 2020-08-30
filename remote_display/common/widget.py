@@ -34,7 +34,7 @@ class Control_base():
         with open(self.config_file, 'r') as config:
             out = []
             for line in config:
-                if line.startswith(option):
+                if line.split('=')[0].strip() == option:
                     line = '%s = %s\n' % (option, value)
                 out.append(line)
         with open(self.config_file, 'w') as config:

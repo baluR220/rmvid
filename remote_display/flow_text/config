@@ -2,16 +2,16 @@
 
 POSITION = +50+50
 
-GEOMETRY = 600x30
+GEOMETRY = 600x50
 
-BG_COLOR = blue
+BG_COLOR = red
 
-TEXT_COLOR = orange
+TEXT_COLOR = #333333
 
 FONT_FAMILY = Helvetica
 
-TEXT = Sample text
-
-SPEED = 2
+SPEED = 3
 
 DIRECTION = left
+
+TEXT = wow set, get text :))

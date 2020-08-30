@@ -112,6 +112,7 @@ class Flow_text():
         '''
         Change background color
         '''
+        color = color[0]
         if self.color_is_valid(color):
             if color == control.options['BG_COLOR']:
                 return('bg_color is already %s' % color)
@@ -127,6 +128,7 @@ class Flow_text():
         '''
         Change text color
         '''
+        color = color[0]
         if self.color_is_valid(color):
             if color == control.options['TEXT_COLOR']:
                 return('text_color is already %s' % color)
@@ -143,6 +145,7 @@ class Flow_text():
         change position, vaild position looks like '+50+50'
         which means the offset from left upper corner of display
         '''
+        position = position[0]
         match = re.search(r'^(?:[-+][0-9]+){2}$', position)
         if match:
             if position == control.options['POSITION']:
@@ -159,6 +162,7 @@ class Flow_text():
         '''
         Chnage width and height of flow_text widget
         '''
+        geometry = geometry[0]
         match = re.search(r'^[0-9]+x[0-9]+$', geometry)
         if match:
             if geometry == control.options['GEOMETRY']:
@@ -184,6 +188,7 @@ class Flow_text():
         '''
         Change speed of movemenet
         '''
+        speed = speed[0]
         if speed.isdigit():
             if speed == control.options['SPEED']:
                 return('speed is already %s' % speed)
@@ -202,6 +207,7 @@ class Flow_text():
         '''
         Change direction of movement
         '''
+        direction = direction[0]
         if direction in ['left', 'right']:
             if direction == control.options['DIRECTION']:
                 return('direction is already %s' % direction)
@@ -211,6 +217,19 @@ class Flow_text():
                 return('direction changed to %s' % direction)
         else:
             return('wrong direction: %s' % direction)
+
+    def change_text(self, text):
+        '''
+        Change text
+        '''
+        if text:
+            text = ' '.join(text)
+            self.main_canvas.itemconfig(self.main_text, text=text)
+            self.root.update()
+            control.save_to_config('TEXT', text)
+            return('text changed to %s...' % text[:20])
+        else:
+            return('wrong text: %s' % text[:20])
 
     def get_option(self, option):
         '''
@@ -234,6 +253,8 @@ class Flow_text():
             return self.change_direction(value)
         elif option.lower() == 'speed':
             return self.change_speed(value)
+        elif option.lower() == 'text':
+            return self.change_text(value)
         else:
             return 'unknown element passed the filter!'
 
@@ -254,7 +275,7 @@ class Control(Control_base):
                     if command[1] == 'set':
                         if len(command[2:]) > 0:
                             return self.widget.set_option(
-                                command[0], command[2]
+                                command[0], command[2:]
                             )
                         else:
                             return ('more arguments needed')
