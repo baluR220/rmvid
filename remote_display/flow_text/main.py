@@ -61,11 +61,17 @@ class Flow_text():
         )
 
     def find_text_length(self):
+        '''
+        Find length of main_text whenever it s needed.
+        '''
         bounds = self.main_canvas.bbox(self.main_text)
         length = bounds[2] - bounds[0]
         return length
 
     def prepare_to_move(self, direction):
+        '''
+        Place main_text accordingly to the direction
+        '''
         length = self.find_text_length()
         if direction.lower() == 'right':
             self.direct = 1
@@ -106,10 +112,13 @@ class Flow_text():
         Change background color
         '''
         if self.color_is_valid(color):
-            self.main_canvas.config(bg=color)
-            self.root.update()
-            control.save_to_config('BG_COLOR', color)
-            return('bg_color changed to %s' % color)
+            if color == control.options['BG_COLOR']:
+                return('bg_color is already %s' % color)
+            else:
+                self.main_canvas.config(bg=color)
+                self.root.update()
+                control.save_to_config('BG_COLOR', color)
+                return('bg_color changed to %s' % color)
         else:
             return('wrong bg_color: %s' % color)
 
@@ -118,10 +127,13 @@ class Flow_text():
         Change text color
         '''
         if self.color_is_valid(color):
-            self.main_canvas.itemconfig(self.main_text, fill=color)
-            self.root.update()
-            control.save_to_config('TEXT_COLOR', color)
-            return('text_color changed to %s' % color)
+            if color == control.options['TEXT_COLOR']:
+                return('text_color is already %s' % color)
+            else:
+                self.main_canvas.itemconfig(self.main_text, fill=color)
+                self.root.update()
+                control.save_to_config('TEXT_COLOR', color)
+                return('text_color changed to %s' % color)
         else:
             return('wrong text_color: %s' % color)
 
@@ -132,46 +144,67 @@ class Flow_text():
         '''
         match = re.search(r'^(?:[-+][0-9]+){2}$', position)
         if match:
-            self.root.geometry(position)
-            self.root.update()
-            control.save_to_config('POSITION', position)
-            return('position changed to %s' % position)
+            if position == control.options['POSITION']:
+                return('position is already %s' % position)
+            else:
+                self.root.geometry(position)
+                self.root.update()
+                control.save_to_config('POSITION', position)
+                return('position changed to %s' % position)
         else:
             return('wrong position: %s' % position)
 
     def change_geometry(self, geometry):
+        '''
+        Chnage width and height of flow_text widget
+        '''
         match = re.search(r'^[0-9]+x[0-9]+$', geometry)
         if match:
-            width, height = geometry.split('x')
-            width = int(width)
-            height = int(height)
-            self.main_canvas.config(width=width, height=height)
-            self.width = width
-            font_size = int(height * 0.7)
-            offset_y = -height * 0.08
-            font = (control.options['FONT_FAMILY'], font_size)
-            self.main_canvas.itemconfig(self.main_text, font=font)
-            self.main_canvas.coords(self.main_text, (0, offset_y))
-            self.root.update()
-            control.save_to_config('GEOMETRY', geometry)
-            return('geometry changed to %s' % geometry)
+            if geometry == control.options['GEOMETRY']:
+                return('geometry is already %s' % geometry)
+            else:
+                width, height = geometry.split('x')
+                width = int(width)
+                height = int(height)
+                self.main_canvas.config(width=width, height=height)
+                self.width = width
+                font_size = int(height * 0.7)
+                offset_y = -height * 0.08
+                font = (control.options['FONT_FAMILY'], font_size)
+                self.main_canvas.itemconfig(self.main_text, font=font)
+                self.main_canvas.coords(self.main_text, (0, offset_y))
+                self.root.update()
+                control.save_to_config('GEOMETRY', geometry)
+                return('geometry changed to %s' % geometry)
         else:
             return('wrong geometry: %s' % geometry)
 
     def change_speed(self, speed):
+        '''
+        Change speed of movemenet
+        '''
         if speed.isdigit():
-            speed = int(speed)
-            self.speed = speed
-            control.save_to_config('SPEED', speed)
-            return('speed changed to %s' % speed)
+            if speed == control.options['SPEED']:
+                return('speed is already %s' % speed)
+            else:
+                speed = int(speed)
+                self.speed = speed
+                control.save_to_config('SPEED', speed)
+                return('speed changed to %s' % speed)
         else:
             return('wrong speed: %s' % speed)
 
     def change_direction(self, direction):
+        '''
+        Change direction of movement
+        '''
         if direction in ['left', 'right']:
-            self.prepare_to_move(direction)
-            control.save_to_config('DIRECTION', direction)
-            return('direction changed to %s' % direction)
+            if direction == control.options['direction']:
+                return('direction is already %s' % direction)
+            else:
+                self.prepare_to_move(direction)
+                control.save_to_config('DIRECTION', direction)
+                return('direction changed to %s' % direction)
         else:
             return('wrong direction: %s' % direction)
 
