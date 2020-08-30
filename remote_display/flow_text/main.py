@@ -23,6 +23,7 @@ class Flow_text():
     Flowing text widget.
     '''
     def __init__(self):
+        self.speed_list = [50, 25, 10, 8, 5]
         self.text = control.options['TEXT']
         self.text_color = control.options['TEXT_COLOR']
         self.bg_color = control.options['BG_COLOR']
@@ -35,7 +36,7 @@ class Flow_text():
         self.font_size = int(self.height * 0.7)
         self.offset_y = -self.height * 0.08
         self.offset_x = 0
-        self.speed = control.options['SPEED']
+        self.speed = int(control.options['SPEED'])
         self.draw_widget()
         self.prepare_to_move(direction)
         self.move_widget()
@@ -86,7 +87,7 @@ class Flow_text():
         '''
         length = self.find_text_length()
         self.main_canvas.move(self.main_text, self.direct, 0)
-        period = self.speed
+        period = self.speed_list[self.speed - 1]
         if self.direct == -1:
             is_shown = self.main_canvas.coords(self.main_text)[0] > -length
             start_point = self.width + length
@@ -187,10 +188,13 @@ class Flow_text():
             if speed == control.options['SPEED']:
                 return('speed is already %s' % speed)
             else:
-                speed = int(speed)
-                self.speed = speed
-                control.save_to_config('SPEED', speed)
-                return('speed changed to %s' % speed)
+                int_speed = int(speed)
+                if int_speed in range(1, 6):
+                    self.speed = int_speed
+                    control.save_to_config('SPEED', speed)
+                    return('speed changed to %s' % speed)
+                else:
+                    return('wrong speed: %s' % speed)
         else:
             return('wrong speed: %s' % speed)
 
@@ -238,7 +242,7 @@ class Control(Control_base):
     '''
     Class that handles commands from the control application.
     '''
-    def handle_command(self, command: str) -> str:
+    def handle_command(self, command):
         '''
         Determines which command to execute. Always returns a string
         that is sent to the control application.
