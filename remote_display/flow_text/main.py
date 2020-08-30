@@ -89,7 +89,7 @@ class Flow_text():
         period = self.speed
         if self.direct == -1:
             is_shown = self.main_canvas.coords(self.main_text)[0] > -length
-            start_point = length + self.width
+            start_point = self.width + length
         elif self.direct == 1:
             is_shown = self.main_canvas.coords(self.main_text)[0] < self.width
             start_point = -(length + self.width)
@@ -199,7 +199,7 @@ class Flow_text():
         Change direction of movement
         '''
         if direction in ['left', 'right']:
-            if direction == control.options['direction']:
+            if direction == control.options['DIRECTION']:
                 return('direction is already %s' % direction)
             else:
                 self.prepare_to_move(direction)
