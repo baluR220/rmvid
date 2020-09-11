@@ -1,4 +1,0 @@
-nitrogen --set-centered --set-color=#111111 /opt/rmvid-server/wallpaper/* &
-xset s off &
-xset -dpms &
-xset s noblank &
